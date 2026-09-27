@@ -43,9 +43,33 @@ async def help_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
     )
     await update.message.reply_text(help_text, parse_mode="Markdown")
 
+import time
+
+USER_REQUEST_TIMES = {}
+MAX_REQUESTS_PER_WINDOW = 5
+WINDOW_SECONDS = 30
+
+def check_rate_limit(user_id: int) -> bool:
+    now = time.time()
+    user_times = USER_REQUEST_TIMES.get(user_id, [])
+    valid_times = [t for t in user_times if now - t < WINDOW_SECONDS]
+    if len(valid_times) >= MAX_REQUESTS_PER_WINDOW:
+        return False
+    valid_times.append(now)
+    USER_REQUEST_TIMES[user_id] = valid_times
+    return True
+
 async def analyze_message_handler(update: Update, context: ContextTypes.DEFAULT_TYPE):
     user_text = update.message.text
     if not user_text:
+        return
+
+    user_id = update.effective_user.id
+    if not check_rate_limit(user_id):
+        await update.message.reply_text(
+            "⏱️ **Limite de requêtes atteinte !**\nVous envoyez trop de messages d'analyse à la fois. Veuillez patienter 30 secondes.",
+            parse_mode="Markdown"
+        )
         return
 
     # Message de prise en charge
