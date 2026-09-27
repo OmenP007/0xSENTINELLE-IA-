@@ -1,0 +1,43 @@
+{
+  "manifest_version": 3,
+  "name": "0xSentinelle Shield — Anti-Arnaque Côte d'Ivoire",
+  "version": "2.0.0",
+  "description": "Protection IA en temps réel contre les arnaques, le hameçonnage et le broutage sur WhatsApp Web, Facebook et le web.",
+  "permissions": [
+    "activeTab",
+    "storage",
+    "scripting"
+  ],
+  "host_permissions": [
+    "https://web.whatsapp.com/*",
+    "https://*.facebook.com/*",
+    "https://*.messenger.com/*",
+    "http://localhost:8000/*"
+  ],
+  "background": {
+    "scripts": ["background.js"],
+    "service_worker": "background.js"
+  },
+  "browser_specific_settings": {
+    "gecko": {
+      "id": "0xsentinelle-shield@sentinelle.ia",
+      "strict_min_version": "109.0"
+    }
+  },
+  "action": {
+    "default_popup": "popup.html",
+    "default_title": "0xSentinelle IA Protection"
+  },
+  "content_scripts": [
+    {
+      "matches": [
+        "https://web.whatsapp.com/*",
+        "https://*.facebook.com/*",
+        "https://*.messenger.com/*"
+      ],
+      "js": ["content_script.js"],
+      "css": ["styles.css"]
+    }
+  ]
+}
+

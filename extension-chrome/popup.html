@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <title>0xSentinelle Shield</title>
+  <style>
+    body {
+      width: 320px;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      margin: 0;
+      padding: 14px;
+      background: #0f172a;
+      color: #f8fafc;
+    }
+    .header {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 12px;
+      border-bottom: 1px solid #334155;
+      padding-bottom: 8px;
+    }
+    .header h2 {
+      font-size: 15px;
+      margin: 0;
+      background: linear-gradient(135deg, #60a5fa, #a78bfa);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .svg-icon {
+      width: 16px;
+      height: 16px;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+      fill: none;
+      stroke: currentColor;
+    }
+    textarea {
+      width: 100%;
+      box-sizing: border-box;
+      background: #1e293b;
+      border: 1px solid #334155;
+      color: white;
+      border-radius: 6px;
+      padding: 8px;
+      font-size: 12px;
+      margin-bottom: 8px;
+      height: 60px;
+      resize: none;
+    }
+    button {
+      width: 100%;
+      background: linear-gradient(135deg, #2563eb, #7c3aed);
+      color: white;
+      border: none;
+      border-radius: 6px;
+      padding: 8px;
+      font-weight: bold;
+      cursor: pointer;
+      font-size: 13px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+    }
+    button:hover {
+      opacity: 0.9;
+    }
+    #result {
+      margin-top: 12px;
+      padding: 10px;
+      background: #1e293b;
+      border-radius: 6px;
+      font-size: 11px;
+      display: none;
+    }
+    .badge {
+      display: inline-block;
+      padding: 3px 8px;
+      border-radius: 4px;
+      font-weight: bold;
+      margin-bottom: 6px;
+    }
+    .badge-critique { background: #ef4444; color: white; }
+    .badge-eleve { background: #f97316; color: white; }
+    .badge-modere { background: #eab308; color: black; }
+    .badge-faible { background: #22c55e; color: white; }
+    ul { margin: 4px 0; padding-left: 16px; }
+  </style>
+</head>
+<body>
+
+  <div class="header">
+    <svg class="svg-icon" style="color:#60a5fa;" viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+    <h2>0xSentinelle Shield</h2>
+  </div>
+
+  <div style="font-size: 11px; color: #94a3b8; margin-bottom: 8px;">
+    Analyse IA instantanée SMS, WhatsApp, Facebook & URLs.
+  </div>
+
+  <textarea id="textInput" placeholder="Collez un SMS, message WhatsApp ou lien à analyser..."></textarea>
+  
+  <button id="scanBtn">
+    <svg class="svg-icon" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
+    Scanner l'Élément
+  </button>
+
+  <div id="result">
+    <div id="scoreBadge" class="badge"></div>
+    <div id="explanation" style="margin-bottom: 6px;"></div>
+    <div id="findingsContainer"></div>
+  </div>
+
+  <script src="popup.js"></script>
+</body>
+</html>

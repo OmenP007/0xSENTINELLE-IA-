@@ -1,0 +1,41 @@
+{
+  "wave": {
+    "official_domains": ["wave.com", "business.wave.com"],
+    "official_channels": ["Application officielle Wave", "wave.com"],
+    "known_procedures": [
+      "Wave ne demande jamais de code OTP par message.",
+      "Wave ne demande jamais un paiement pour débloquer un gain."
+    ]
+  },
+  "orange_money": {
+    "official_domains": ["orange.ci", "orangemoney.orange.ci"],
+    "official_channels": ["Application Orange Money", "Agence Orange officielle"],
+    "known_procedures": [
+      "Orange Money ne demande jamais votre code secret par SMS ou appel.",
+      "Aucun concours Orange Money ne demande de paiement pour recevoir un gain."
+    ]
+  },
+  "mtn_momo": {
+    "official_domains": ["mtn.ci", "mtnmomo.com"],
+    "official_channels": ["Application MTN MoMo", "Agence MTN officielle"],
+    "known_procedures": [
+      "MTN MoMo ne demande jamais de code OTP par message.",
+      "Aucun remboursement ou gain ne nécessite un paiement préalable."
+    ]
+  },
+  "djamo": {
+    "official_domains": ["djamo.io", "djamo.ci"],
+    "official_channels": ["Application Djamo", "Support officiel Djamo"],
+    "known_procedures": [
+      "Djamo ne vous demandera jamais vos identifiants ou votre code PIN."
+    ]
+  },
+  "moov_money": {
+    "official_domains": ["moov-africa.ci", "moovmoney.ci"],
+    "official_channels": ["Application Moov Money", "Agence Moov Africa"],
+    "known_procedures": [
+      "Moov Money ne réclame pas de paiement pour valider un lot ou un gain."
+    ]
+  }
+}
+

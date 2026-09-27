@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>0xSentinelle IA — Scan before you trust.</title>
+<link rel="stylesheet" href="/static/style.css" />
+</head>
+<body>
+  <div class="app">
+    <header class="hero">
+      <div class="logo">0x<span>Sentinelle</span> IA</div>
+      <p class="tagline">Scan before you trust. — Agentique Multi-Agents Protection</p>
+    </header>
+
+    <main class="panel">
+      <div class="tabs">
+        <button class="tab active" data-tab="text">Message</button>
+        <button class="tab" data-tab="image">Capture</button>
+        <button class="tab" data-tab="url">URL</button>
+      </div>
+
+      <section class="tab-content active" id="tab-text">
+        <textarea id="message-input" placeholder="Collez votre message ici..."></textarea>
+        <input type="text" id="brand-text" placeholder="Marque revendiquée (optionnel, ex: Wave)" />
+        <button class="analyze-btn" id="btn-analyze-text">ANALYSER AVEC L'AGENT</button>
+      </section>
+
+      <section class="tab-content" id="tab-image">
+        <label class="upload-zone" for="image-input">
+          <span id="image-filename">📷 Importer une capture d'écran</span>
+          <input type="file" id="image-input" accept="image/*" hidden />
+        </label>
+        <input type="text" id="brand-image" placeholder="Marque revendiquée (optionnel, ex: Orange Money)" />
+        <button class="analyze-btn" id="btn-analyze-image">ANALYSER LA CAPTURE</button>
+      </section>
+
+      <section class="tab-content" id="tab-url">
+        <input type="text" id="url-input" placeholder="https://exemple-suspect.com" />
+        <input type="text" id="brand-url" placeholder="Marque revendiquée (optionnel, ex: MTN Momo)" />
+        <button class="analyze-btn" id="btn-analyze-url">ANALYSER L'URL</button>
+      </section>
+
+      <div id="loading" class="loading hidden">
+        <div class="spinner"></div>
+        <p>Analyse Multi-Agents en cours...</p>
+      </div>
+
+      <div id="result" class="result hidden">
+        <div class="score-card">
+          <div class="gauge-container">
+            <svg class="gauge-svg" viewBox="0 0 120 120">
+              <circle class="gauge-bg" cx="60" cy="60" r="50"></circle>
+              <circle class="gauge-fill" id="gauge-fill" cx="60" cy="60" r="50"></circle>
+            </svg>
+            <div class="score-center">
+              <div class="score-emoji" id="result-emoji">🟢</div>
+              <div class="score-value" id="result-score">0</div>
+              <div class="score-max">/ 100</div>
+            </div>
+          </div>
+          <div class="score-level" id="result-level">FAIBLE</div>
+          <button class="audio-btn" id="btn-audio-alert">🔊 Écouter l'alerte vocale</button>
+        </div>
+
+        <div class="detail-block" id="triggers-block">
+          <h3>🧠 Déclencheurs Psychologiques (Ingénierie Sociale)</h3>
+          <div id="result-triggers" class="triggers-list"></div>
+        </div>
+
+        <div class="detail-block">
+          <h3>Type probable</h3>
+          <p id="result-type">—</p>
+        </div>
+
+        <div class="detail-block">
+          <h3>Signaux détectés</h3>
+          <ul id="result-signals"></ul>
+        </div>
+
+        <div class="detail-block" id="verification-block" style="display:none;">
+          <h3>Vérification Officielle / Typosquatting</h3>
+          <p id="result-verification">—</p>
+        </div>
+
+        <div class="detail-block">
+          <h3>Pourquoi ? (Synthèse de l'Agent)</h3>
+          <p id="result-explanation">—</p>
+        </div>
+
+        <div class="detail-block">
+          <h3>Recommandations de Sécurité</h3>
+          <ul id="result-recommendations"></ul>
+        </div>
+
+        <div class="actions-row">
+          <button class="analyze-btn secondary" id="btn-generate-reply">💬 Générer une réponse</button>
+          <button class="analyze-btn secondary report-btn" id="btn-show-report">📋 Signalement Officiel</button>
+        </div>
+
+        <div id="reply-block" class="reply-block hidden">
+          <h3>Réponse prudente suggérée</h3>
+          <p id="reply-text">—</p>
+        </div>
+
+        <div id="report-block" class="report-block hidden">
+          <h3>Rapport d'Abus pour Signalement</h3>
+          <textarea id="report-text" readonly rows="10"></textarea>
+          <button class="analyze-btn" id="btn-copy-report">Copier le rapport</button>
+        </div>
+      </div>
+    </main>
+
+    <footer class="footer">
+      <p>0xSentinelle IA — Hackathon GOMYCODE × NVIDIA · Protection Multi-Agents contre les Arnaques Numériques.</p>
+    </footer>
+
+  </div>
+
+  <script src="/static/app.js"></script>
+</body>
+</html>
