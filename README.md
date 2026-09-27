@@ -36,6 +36,21 @@
 - **Design Vectoriel Épuré :** Icônes SVG Lucide modernes, sans dépendance d'émojis texte.
 - **Compatibilité Firefox & Chrome/Brave :** Détection automatique de l'API (`browser` vs `chrome`).
 
+### 📱 6. Blacklist Communautaire de Numéros CI (`backend/services/phone_service.py`)
+- **Normalisation Automatique :** Formate tous les numéros au format international ivoirien `+22507...`.
+- **Scoring & Alertes :** Vérifie le numéro contre la base de données JSON locale, calcule le score de risque et retourne l'historique des signalements (type d'escroquerie et région).
+- **API de Signalement :** Permet aux citoyens de signaler un nouveau numéro d'arnaqueur en temps réel (`POST /report/phone`).
+
+### 📄 7. Générateur de Rapport PDF Officiel PLCC (`backend/services/pdf_service.py`)
+- **Format Officiel PLCC / DITT :** Génère un dossier de signalement PDF prêt à soumettre à la Plateforme de Lutte Contre la Cybercriminalité de Côte d'Ivoire.
+- **Preuves Techniques & Numéro de Référence :** Génère une référence unique `SENT-PLCC-YYYYMMDDHHMMSS`, le score de risque, la synthèse de l'IA, et les conseils de sécurité.
+
+### 🔒 8. Inspection Domaine & Certificat SSL/TLS (`backend/services/domain_service.py`)
+- **Analyse Cryptographique HTTPS :** Vérifie la présence d'un certificat SSL/TLS valide, l'émetteur (Let's Encrypt / ZeroSSL) et la durée d'expiration restante.
+
+### 👁️ 9. Détection Multimodale Deepfakes & Images IA (`backend/services/ai_service.py`)
+- **Vision IA Avancée :** Détecte les artefacts d'images synthétiques, les visages générés par IA, les cartes d'identité contrefaites et l'usurpation visuelle de logos.
+
 ---
 
 ## 💻 Installation & Démarrage Rapide

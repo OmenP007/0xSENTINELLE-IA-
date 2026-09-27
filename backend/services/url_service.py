@@ -273,6 +273,18 @@ def analyze_url(url: str, claimed_brand: Optional[str] = None) -> dict:
             signals.append("brand_impersonation")
             findings.append(f"🏴‍☠️ [OpenClaw] Marques Mobile Money mentionnées sur le site suspect : {', '.join(brands).upper()}")
 
+    # 9. Inspection du certificat SSL / Domaine (domain_service)
+    try:
+        from services import domain_service
+        ssl_info = domain_service.check_domain_security(url_to_parse)
+        if ssl_info.get("is_suspicious_ssl"):
+            signals.append("suspicious_url")
+            findings.append(f"⚠️ [SSL/TLS] Défaut ou absence de certificat HTTPS sécurisé sur {ssl_info['hostname']}.")
+        for note in ssl_info.get("notes", []):
+            findings.append(f"🔒 [SSL/TLS] {note}")
+    except Exception:
+        pass
+
     parsed_params = parse_qs(query)
     query_param_keys = list(parsed_params.keys())
 

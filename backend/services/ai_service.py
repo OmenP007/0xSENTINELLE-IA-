@@ -322,8 +322,11 @@ def analyze_image(image_bytes: bytes, mime_type: str, claimed_brand: Optional[st
     prompt = (
         f"Marque revendiquée (si connue): {claimed_brand or 'aucune'}\n\n"
         f"{rag_context}\n"
-        "Analyse cette capture d'écran (SMS, WhatsApp, email, page web) "
-        "et détecte les signaux d'arnaque avec le contexte Afrique de l'Ouest."
+        "Analyse cette image ou capture d'écran (SMS, WhatsApp, email, photo de profil, page web, ou extrait vidéo).\n"
+        "Détecte :\n"
+        "1. Les signaux d'arnaque (vol d'OTP, faux transfert, ingénierie sociale, nouchi/français).\n"
+        "2. Les faux logos plagiés (Wave, Orange, MTN, BACI, Moov).\n"
+        "3. Les artefacts d'IMAGES GÉNÉRÉES PAR IA / DEEPFAKES (visages synthétiques, fausses cartes d'identité créées par IA, lissage artificiel, artefacts de Deepfake vidéo/photo)."
     )
     payload = {
         "system_instruction": {"parts": [{"text": SYSTEM_INSTRUCTION}]},

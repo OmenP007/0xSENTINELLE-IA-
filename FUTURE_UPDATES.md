@@ -60,23 +60,34 @@ Header: Content-Disposition attachment; filename="Rapport_PLCC_0xSentinelle_95pc
 
 ---
 
-## 🟠 Priorité 2 — Faisable avec Tokens Existants + Petite Config
+### 🔒 4. Inspection de la Sécurité Domaine & Certificat SSL/TLS — ✅ TERMINÉ
+**Tokens requis :** Aucun — Socket/SSL Python  
+**Effort :** Complété  
+**Impact :** Vérification automatique de la validité HTTPS/SSL, détection des certificats temporaires (Let's Encrypt / ZeroSSL) et pénalisation des domaines récents à haut risque.
 
-### 📸 4. Screenshot Automatique des Pages Suspectes
-**Tokens requis :** `pip install playwright` (gratuit) + **Gemini Vision** (déjà disponible ✅)  
-**Effort :** ~2 heures  
-**Impact :** Détecte visuellement les faux logos Wave/Orange/MTN copiés
-
+```python
+# Implémenté dans domain_service.py & url_service.py
+from services import domain_service
+ssl_info = domain_service.check_domain_security(target_url)
 ```
-URL → Playwright prend screenshot → Gemini Vision analyse l'image
-→ "Faux site Wave détecté : logo copié, formulaire de vol d'OTP présent"
-```
-
-> ✅ **Gemini Vision inclus dans ta clé API** — aucun coût supplémentaire dans les quotas gratuits.
 
 ---
 
-### 🤖 5. Bot Telegram Anti-Arnaque
+### 👁️ 5. Détection des Deepfakes & Images Générées par IA — ✅ TERMINÉ
+**Tokens requis :** Quotas Gemini Vision  
+**Effort :** Complété  
+**Impact :** L'agent Gemini Vision identifie désormais les visages synthétiques, les fausses pièces d'identité générées par IA, et les filtres vidéo/photo d'usurpation.
+
+```python
+# Implémenté dans ai_service.py (analyze_image)
+"Analyse visages synthétiques, fausses cartes d'identité créées par IA, artefacts de Deepfake vidéo/photo."
+```
+
+---
+
+## 🟠 Priorité 2 — Faisable avec Tokens Existants + Petite Config
+
+### 🤖 6. Bot Telegram Anti-Arnaque
 **Tokens requis :** **Token Telegram Bot** (gratuit sur @BotFather) + ta clé Gemini  
 **Effort :** ~2 heures  
 **Impact :** Démultiplication massive — les gens transfèrent un message → réponse en 5 secondes
@@ -92,17 +103,14 @@ Bot → Appel backend 0xSentinelle → Score + explication en français ivoirien
 
 ---
 
-### 🎙️ 6. Analyse Vocale des Appels Suspects
-**Tokens requis :** **Gemini Audio** (inclus dans ta clé ✅) ou Whisper sur ton GPU L40S  
-**Effort :** ~3 heures  
-**Impact :** Transcrire et analyser un enregistrement d'un faux agent Mobile Money
+### 🎙️ 7. Analyse Vocale des Appels Suspects — ✅ TERMINÉ
+**Tokens requis :** Gemini Audio / Whisper GPU  
+**Effort :** Complété  
+**Impact :** Transcrire et analyser un enregistrement d'un faux agent Mobile Money via `/analyze/voice`.
 
 ```
-POST /analyze/audio → fichier .mp3/.wav
-→ Transcription Whisper GPU → Analyse arnaque → Score de risque
+POST /analyze/voice → fichier audio / transcription → Analyse arnaque → Score de risque
 ```
-
-> ✅ **Ton GPU L40S peut faire tourner Whisper large-v3 gratuitement** — 0 token API consommé.
 
 ---
 
