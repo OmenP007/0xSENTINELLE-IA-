@@ -1,5 +1,5 @@
-// API configuration
-const API_BASE = import.meta.env.VITE_API_URL || "http://localhost:8000";
+// API configuration - fallback intelligent pour la prod et dev local
+const API_BASE = import.meta.env.VITE_API_URL || "";
 
 export async function postJSON(path, body) {
   const res = await fetch(`${API_BASE}${path}`, {
