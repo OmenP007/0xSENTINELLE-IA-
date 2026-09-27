@@ -151,6 +151,7 @@ class RAGSearchEngine:
 rag_engine = RAGSearchEngine()
 
 
+
 def get_relevant_rag_context(user_input: str, top_k: int = 3) -> str:
     """Retourne uniquement les passages RAG pertinents formatés pour Gemini."""
     passages = rag_engine.search(user_input, top_k=top_k)

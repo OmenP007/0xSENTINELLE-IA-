@@ -1,0 +1,122 @@
+[
+  {
+    "id": "CHUNK-CI-0000",
+    "category": "Général",
+    "brand": "Inconnu",
+    "official_domain": "",
+    "attack_type": "Général",
+    "risk_signals": [],
+    "content": "# Base de Connaissances Cybersécurité & Anti-Arnaques — Côte d'Ivoire 🇨🇮",
+    "word_count": 11
+  },
+  {
+    "id": "CI-WAVE-0001",
+    "category": "Mobile Money",
+    "brand": "Wave CI",
+    "official_domain": "wave.com / wave.ci",
+    "attack_type": "Phishing / Hameçonnage par faux concours Wave",
+    "risk_signals": [
+      "url_suspecte",
+      "usurpation_marque",
+      "faux_concours",
+      "promesse_exceptionnelle"
+    ],
+    "content": "## 📌 ID: CI-WAVE-0001 | Catégorie: Mobile Money | Marque: Wave CI\n### Domaine Officiel: wave.com / wave.ci\n### Signaux de Risque: url_suspecte, usurpation_marque, faux_concours, promesse_exceptionnelle\n### Attaque: Phishing / Hameçonnage par faux concours Wave\nWave Côte d'Ivoire ne propose JAMAIS de tombolas, tirages au sort ou distribution d'argent gratuit nécessitant de cliquer sur un lien web externe (ex: `wave-ci.kdo.com`, `wave.xyz`, `gain-wave-2026.online`).\nToute demande de code OTP ou de code secret Wave pour débloquer un gain ou réactiver un compte est une tentative d'escroquerie directe.\nSignalement officiel : ARTCI / Support Wave au 1315.",
+    "word_count": 94
+  },
+  {
+    "id": "CI-ORANGE-0002",
+    "category": "Mobile Money",
+    "brand": "Orange Money CI",
+    "official_domain": "orange.ci / om.orange.ci",
+    "attack_type": "Faux agent Orange Money & Menace de blocage",
+    "risk_signals": [
+      "demande_paiement",
+      "urgence",
+      "compte_bloque",
+      "frais_deblocage"
+    ],
+    "content": "## 📌 ID: CI-ORANGE-0002 | Catégorie: Mobile Money | Marque: Orange Money CI\n### Domaine Officiel: orange.ci / om.orange.ci\n### Signaux de Risque: demande_paiement, urgence, compte_bloque, frais_deblocage\n### Attaque: Faux agent Orange Money & Menace de blocage\nLes brouteurs envoient des SMS indiquant \"Votre compte Orange Money sera suspendu dans 2h. Envoyez 5000 FCFA au 07... pour annuler le blocage\" ou se font passer au téléphone pour un agent technique Orange.\nUn agent Orange ne vous demandera JAMAIS votre code secret ni un transfert d'argent pour annuler une suspension de compte.\nSignalement : #144# ou agence Orange CI.",
+    "word_count": 98
+  },
+  {
+    "id": "CI-MTN-0003",
+    "category": "Mobile Money",
+    "brand": "MTN MoMo CI",
+    "official_domain": "mtn.ci",
+    "attack_type": "Vol de code de validation OTP MTN Mobile Money",
+    "risk_signals": [
+      "demande_infos_sensibles",
+      "code_otp",
+      "usurpation_marque"
+    ],
+    "content": "## 📌 ID: CI-MTN-0003 | Catégorie: Mobile Money | Marque: MTN MoMo CI\n### Domaine Officiel: mtn.ci\n### Signaux de Risque: demande_infos_sensibles, code_otp, usurpation_marque\n### Attaque: Vol de code de validation OTP MTN Mobile Money\nTechnique d'escroquerie : le brouteur initie une réinitialisation de votre compte MTN MoMo depuis son téléphone. Vous recevez un SMS d'OTP officiel d'MTN, et le brouteur vous appelle en se disant \"agent MTN qui a fait une erreur de saisie\" et vous demande de lui lire le code reçu.\nDès que vous donnez le code OTP, le brouteur prend le contrôle de votre portefeuille MTN MoMo.",
+    "word_count": 101
+  },
+  {
+    "id": "CI-MARKETPLACE-0004",
+    "category": "E-Commerce",
+    "brand": "Facebook Marketplace / Jumia",
+    "official_domain": "",
+    "attack_type": "Faux vendeur Facebook Marketplace (Arnaque à l'acompte)",
+    "risk_signals": [
+      "demande_paiement",
+      "acompte_requis",
+      "livraison_interurbaine",
+      "faux_marchand"
+    ],
+    "content": "## 📌 ID: CI-MARKETPLACE-0004 | Catégorie: E-Commerce | Marque: Facebook Marketplace / Jumia\n### Signaux de Risque: demande_paiement, acompte_requis, livraison_interurbaine, faux_marchand\n### Attaque: Faux vendeur Facebook Marketplace (Arnaque à l'acompte)\nLe brouteur publie une annonce avec une photo de téléphone (iPhone, Samsung) ou voiture à un prix extrêmement bas (ex: iPhone 15 Pro Max à 120.000 FCFA).\nQuand la victime le contacte, le brouteur prétexte être dans une autre ville (Yamoussoukro, Bouaké, Korhogo) et exige un acompte d'avance par Orange Money/Wave pour \"bloquer l'article\" et \"l'expédier par car\".\nDès la réception du virement, le brouteur bloque le numéro de la victime.",
+    "word_count": 101
+  },
+  {
+    "id": "CI-NOUCHI-0005",
+    "category": "Argots & Vocabulaire Local",
+    "brand": "Inconnu",
+    "official_domain": "",
+    "attack_type": "Général",
+    "risk_signals": [
+      "manipulation_psychologique",
+      "brouteur_expression"
+    ],
+    "content": "## 📌 ID: CI-NOUCHI-0005 | Catégorie: Argots & Vocabulaire Local | Langue: Nouchi / Dioula\n### Signaux de Risque: manipulation_psychologique, brouteur_expression\n### Expressions Brouteurs Ivoiriens :\n- \"On se retrouve\" : rendez-vous physique piégé ou fausse promesse.\n- \"Gâter\" / \"Dja\" : escroquer / argent.\n- \"C'est chaud sur moi\" : création de fausse urgence ou appel à la compassion.\n- \"Envoie d'abord les frais de transport\" : piège classique du faux colis ou faux rendez-vous.\n- \"Kari / Wari\" (Dioula) : argent / document.",
+    "word_count": 85
+  },
+  {
+    "id": "CI-RECRUTEMENT-0006",
+    "category": "Emploi",
+    "brand": "Mines / ONG / CEPICI",
+    "official_domain": "",
+    "attack_type": "Faux recrutement dans les mines ou ONG en Côte d'Ivoire",
+    "risk_signals": [
+      "frais_dossier",
+      "recrutement_fantome",
+      "virement_avance"
+    ],
+    "content": "## 📌 ID: CI-RECRUTEMENT-0006 | Catégorie: Emploi | Marque: Mines / ONG / CEPICI\n### Signaux de Risque: frais_dossier, recrutement_fantome, virement_avance\n### Attaque: Faux recrutement dans les mines ou ONG en Côte d'Ivoire\nDes SMS ou emails proposent des contrats de travail fictifs à des salaires mirobolants (ex: 800.000 FCFA/mois dans une mine à San-Pédro).\nLes brouteurs exigent 15.000 FCFA à 50.000 FCFA par Mobile Money pour \"les frais de visite médicale\" ou \"l'établissement du badge\".\nAucune entreprise sérieuse ni ONG en Côte d'Ivoire ne demande de payer par Mobile Money pour être recruté.",
+    "word_count": 94
+  },
+  {
+    "id": "CI-COLIS-0007",
+    "category": "Logistique",
+    "brand": "DHL CI / Douane Ivoirienne",
+    "official_domain": "",
+    "attack_type": "Arnaque au faux colis bloqué en douane",
+    "risk_signals": [
+      "frais_douane",
+      "colis_bloque",
+      "faux_agent_douane"
+    ],
+    "content": "## 📌 ID: CI-COLIS-0007 | Catégorie: Logistique | Marque: DHL CI / Douane Ivoirienne\n### Signaux de Risque: frais_douane, colis_bloque, faux_agent_douane\n### Attaque: Arnaque au faux colis bloqué en douane\nLa victime reçoit un message prétendant qu'un colis venant de l'étranger (souvent d'un amant virtuel ou d'un prétendu diplomate) est bloqué à l'aéroport d'Abidjan (Félix Houphouët-Boigny).\nUn soi-disant \"agent de douane\" appelle pour réclamer des frais de déblocage urgents sous peine de poursuites judiciaires.",
+    "word_count": 74
+  },
+  {
+    "id": "CI-PLCC-0008",
+    "category": "Institution Officielle",
+    "brand": "PLCC / ARTCI",
+    "official_domain": "",
+    "attack_type": "Général",
+    "risk_signals": [],
+    "content": "## 📌 ID: CI-PLCC-0008 | Catégorie: Institution Officielle | Marque: PLCC / ARTCI\n### Contact Officiel: +225 27 20 25 98 72 / cybercriminalite@interieur.gouv.ci\n### Procédure de Signalement :\nEn cas de fraude avérée en Côte d'Ivoire :\n1. Conserver les captures d'écran des messages et le numéro du transfert Mobile Money.\n2. Déposer une plainte auprès de la Plateforme de Lutte Contre la Cybercriminalité (PLCC) située à Abidjan Cocody.\n3. Alerter l'ARTCI (Autorité de Régulation des Télécommunications/TIC de Côte d'Ivoire).",
+    "word_count": 81
+  }
+]

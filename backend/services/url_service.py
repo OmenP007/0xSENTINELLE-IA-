@@ -55,6 +55,40 @@ def detect_typosquatting(domain_no_port: str) -> Optional[dict]:
     return None
 
 
+import httpx
+
+
+def fetch_live_page_content(target_url: str, timeout: float = 4.0) -> dict:
+    """Visite et inspecte le contenu HTML d'une URL en temps réel (OpenClaw / Light Crawler)."""
+    headers = {
+        "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36"
+    }
+    try:
+        resp = httpx.get(target_url, headers=headers, timeout=timeout, follow_redirects=True)
+        html_text = resp.text.lower()
+
+        # Titre de la page
+        title_match = re.search(r"<title[^>]*>(.*?)</title>", html_text, re.IGNORECASE | re.DOTALL)
+        page_title = title_match.group(1).strip() if title_match else ""
+
+        # Formulaires & Champs de saisie suspects
+        has_password_field = "type=\"password\"" in html_text or "type='password'" in html_text
+        has_otp_field = any(k in html_text for k in ["otp", "code pin", "code secret", "mot de passe", "passcode"])
+        has_phone_input = "type=\"tel\"" in html_text or "numero" in html_text or "telephone" in html_text
+
+        return {
+            "status_code": resp.status_code,
+            "final_url": str(resp.url),
+            "page_title": page_title[:100],
+            "has_password_field": has_password_field,
+            "has_otp_field": has_otp_field,
+            "has_phone_input": has_phone_input,
+            "scraped_text_sample": page_title or "Page HTML capturée",
+        }
+    except Exception as e:
+        return {"error": str(e)}
+
+
 def analyze_url(url: str, claimed_brand: Optional[str] = None) -> dict:
     signals = []
     notes = []
@@ -82,7 +116,7 @@ def analyze_url(url: str, claimed_brand: Optional[str] = None) -> dict:
         notes.append("Connexion non sécurisée (HTTP au lieu de HTTPS).")
         findings.append("🔴 Connexion HTTP non sécurisée (absence de certificat SSL).")
 
-    # 2. Détection d'adresse IP brute (ex: http://192.168.1.1/wave)
+    # 2. Détection d'adresse IP brute
     is_ip_address = bool(re.match(r"^\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}$", domain_no_port))
     if is_ip_address:
         signals.append("suspicious_url")
@@ -99,9 +133,8 @@ def analyze_url(url: str, claimed_brand: Optional[str] = None) -> dict:
             findings.append(f"🟠 Extension TLD à haut risque détectée ({tld}).")
             break
 
-    # 4. Structure des sous-domaines (ex: wave.kdo.com -> sous-domaine = wave, domaine réel = kdo.com)
+    # 4. Structure des sous-domaines
     subdomains = domain_no_port.split(".")
-    subdomain_count = len(subdomains) - 2 if len(subdomains) > 2 else 0
     subdomain_impersonation = None
     if len(subdomains) >= 3:
         subdomain_part = subdomains[0]
@@ -163,7 +196,7 @@ def analyze_url(url: str, claimed_brand: Optional[str] = None) -> dict:
             notes.append(f"Domaine reconnu comme officiel pour '{detected_brand}'.")
             findings.append(f"✅ Domaine officiel confirmé pour '{detected_brand}'.")
 
-    # 7. Mots-clés de phishing dans le domaine, le chemin ou les paramètres
+    # 7. Mots-clés de phishing
     found_keywords = []
     full_url_lower = raw_url.lower()
     for kw in SUSPICIOUS_KEYWORDS:
@@ -176,10 +209,12 @@ def analyze_url(url: str, claimed_brand: Optional[str] = None) -> dict:
         notes.append(f"Mots-clés de phishing détectés dans l'URL : {', '.join(found_keywords)}.")
         findings.append(f"🟠 Mots-clés suspects trouvés dans l'URL : {', '.join(found_keywords)}.")
 
-    # 8. Analyse du chemin (path) & paramètres (query)
-    if any(login_kw in path for login_kw in ["login", "connexion", "auth", "signin", "otp", "deblocage"]):
-        findings.append("🔑 Page de connexion ou formulaire d'authentification / OTP suspect détecté dans l'URL.")
-        signals.append("sensitive_info_request")
+    # 8. Inspection dynamique du contenu (OpenClaw / Scraper Web)
+    crawl_data = fetch_live_page_content(url_to_parse)
+    if "error" not in crawl_data:
+        if crawl_data.get("has_otp_field") or crawl_data.get("has_password_field"):
+            signals.append("sensitive_info_request")
+            findings.append(f"🔑 [OpenClaw Scraper] Formulaire de saisie de mot de passe ou code OTP détecté sur le site ('{crawl_data.get('page_title')}').")
 
     parsed_params = parse_qs(query)
     query_param_keys = list(parsed_params.keys())
@@ -198,6 +233,7 @@ def analyze_url(url: str, claimed_brand: Optional[str] = None) -> dict:
         "findings": findings,
         "verification": verification,
         "typosquatting_detected": typosquat is not None or subdomain_impersonation is not None,
+        "crawl_inspection": crawl_data,
         "details": {
             "full_url": raw_url,
             "host": domain_no_port,
@@ -206,7 +242,9 @@ def analyze_url(url: str, claimed_brand: Optional[str] = None) -> dict:
             "query_parameters": query_param_keys,
             "suspicious_keywords_found": found_keywords,
             "technical_findings": findings,
+            "live_page_title": crawl_data.get("page_title"),
         },
     }
+
 
 

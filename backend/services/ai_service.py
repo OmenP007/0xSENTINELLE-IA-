@@ -154,25 +154,40 @@ def _extract_json(text: str) -> dict:
     return json.loads(text)
 
 
-def _fallback_result(reason: str) -> dict:
+def _fallback_result(reason: str, message: str = "") -> dict:
+    detected_signals = []
+    text_lower = message.lower()
+    if any(k in text_lower for k in ["code", "otp", "pin", "secret"]):
+        detected_signals.append("DEMANDE_INFOS_SENSIBLES")
+    if any(k in text_lower for k in ["urgent", "bloqué", "suspension", "24h", "immédiatement"]):
+        detected_signals.append("URGENCE")
+    if any(k in text_lower for k in ["payer", "acompte", "avance", "virement", "frais", "orange money", "mtn", "wave"]):
+        detected_signals.append("DEMANDE_PAIEMENT")
+
+    score = _bayesian_score_boost(message, 0) if message else 0
+    if detected_signals and score < 50:
+        score = 65
+    level, emoji = _level_from_score(score)
+
     return {
-        "scam_type": "indetermine",
-        "score": 0,
-        "signals": [],
-        "psychological_triggers": [],
-        "explanation": f"Analyse IA indisponible ({reason}). Vérifiez manuellement.",
+        "scam_type": "phishing" if "DEMANDE_INFOS_SENSIBLES" in detected_signals else "indetermine",
+        "score": score,
+        "signals": detected_signals,
+        "psychological_triggers": [{"name": "URGENCE", "description": "Menace de blocage ou délai court"}] if "URGENCE" in detected_signals else [],
+        "explanation": f"Analyse heuristique de secours activée ({reason}). Signaux détectés par le moteur RAG local.",
         "recommendations": [
-            "Ne communiquez aucune information sensible avant vérification.",
-            "Contactez le service via son canal officiel.",
+            "Ne communiquez aucune information sensible ni aucun code par SMS.",
+            "Contactez directement le service client officiel avant d'effectuer un paiement.",
         ],
-        "confidence": "low",
+        "confidence": "medium" if detected_signals else "low",
         "language_detected": "fr",
         "verification_note": "",
         "typosquatting_detected": False,
-        "official_report": "",
-        "level": "FAIBLE",
-        "level_emoji": "🟢",
+        "official_report": "Signalement automatique de secours.",
+        "level": level,
+        "level_emoji": emoji,
     }
+
 
 
 def _post_with_retry(payload: dict, timeout: float = 30.0) -> dict:
@@ -222,12 +237,30 @@ def _enrich_result(result: dict, raw_text: str) -> dict:
     return result
 
 
+from services import rag_service, ollama_service
+
+
 def analyze_text(message: str, claimed_brand: Optional[str] = None) -> dict:
+    # Recherche RAG des passages pertinents
+    rag_context = rag_service.get_relevant_rag_context(f"{claimed_brand or ''} {message}", top_k=3)
+
+    prompt = (
+        f"Marque revendiquée (si connue): {claimed_brand or 'aucune'}\n\n"
+        f"{rag_context}\n"
+        f"Contenu à analyser:\n{message}"
+    )
+
+    # 1. Essai prioritaire via le GPU NVIDIA Brev (Ollama) si configuré
+    if ollama_service.is_ollama_available():
+        ollama_result = ollama_service.query_ollama_brev(prompt, SYSTEM_INSTRUCTION)
+        if ollama_result:
+            return _enrich_result(ollama_result, message)
+
+    # 2. Sinon appel API Gemini
     api_key, _ = _get_gemini_config()
     if not api_key:
-        return _fallback_result("clé API manquante")
+        return _fallback_result("clé API manquante", message)
 
-    prompt = f"Marque revendiquée (si connue): {claimed_brand or 'aucune'}\n\nContenu à analyser:\n{message}"
     payload = {
         "system_instruction": {"parts": [{"text": SYSTEM_INSTRUCTION}]},
         "contents": [{"parts": [{"text": prompt}]}],
@@ -239,17 +272,22 @@ def analyze_text(message: str, claimed_brand: Optional[str] = None) -> dict:
         result = _extract_json(text)
         return _enrich_result(result, message)
     except Exception as e:
-        return _fallback_result(str(e))
+        return _fallback_result(str(e), message)
+
 
 
 def analyze_conversation(transcript: str, claimed_brand: Optional[str] = None) -> dict:
     api_key, _ = _get_gemini_config()
     if not api_key:
-        return _fallback_result("clé API manquante")
+        return _fallback_result("clé API manquante", transcript)
+
+    # Recherche RAG des passages pertinents pour la conversation
+    rag_context = rag_service.get_relevant_rag_context(f"{claimed_brand or ''} {transcript}", top_k=3)
 
     conv_prompt = (
         f"Tu es 0xSentinelle IA. Analyse cet ÉCHANGE COMPLET DE CONVERSATION (WhatsApp / Facebook Marketplace / SMS).\n"
         f"Marque/Service revendiqué: {claimed_brand or 'aucun'}\n\n"
+        f"{rag_context}\n"
         f"--- TRANSCRIPT DE LA CONVERSATION ---\n"
         f"{transcript}\n"
         f"-------------------------------------\n\n"
@@ -269,7 +307,7 @@ def analyze_conversation(transcript: str, claimed_brand: Optional[str] = None) -
         result = _extract_json(text)
         return _enrich_result(result, transcript)
     except Exception as e:
-        return _fallback_result(str(e))
+        return _fallback_result(str(e), transcript)
 
 
 
@@ -279,8 +317,11 @@ def analyze_image(image_bytes: bytes, mime_type: str, claimed_brand: Optional[st
         return _fallback_result("clé API manquante")
 
     b64 = base64.b64encode(image_bytes).decode("utf-8")
+    rag_context = rag_service.get_relevant_rag_context(claimed_brand or "capture d'écran arnaque mobile money", top_k=2)
+
     prompt = (
         f"Marque revendiquée (si connue): {claimed_brand or 'aucune'}\n\n"
+        f"{rag_context}\n"
         "Analyse cette capture d'écran (SMS, WhatsApp, email, page web) "
         "et détecte les signaux d'arnaque avec le contexte Afrique de l'Ouest."
     )
@@ -303,6 +344,7 @@ def analyze_image(image_bytes: bytes, mime_type: str, claimed_brand: Optional[st
         return _enrich_result(result, "")
     except Exception as e:
         return _fallback_result(str(e))
+
 
 
 def generate_cautious_reply(original_message: str, scam_type: Optional[str] = None) -> str:

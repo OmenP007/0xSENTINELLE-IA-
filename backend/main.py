@@ -18,7 +18,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
 from fastapi.responses import FileResponse
 
-from routes import analyze, image, url, voice
+from routes import analyze, image, url, voice, upload
 
 app = FastAPI(title="0xSentinelle IA", description="Scan before you trust. — v2.0")
 
@@ -33,6 +33,8 @@ app.include_router(analyze.router, tags=["analyze"])
 app.include_router(image.router, tags=["image"])
 app.include_router(url.router, tags=["url"])
 app.include_router(voice.router, tags=["voice"])
+app.include_router(upload.router, tags=["rag"])
+
 
 FRONTEND_DIR = os.path.join(os.path.dirname(__file__), "..", "frontend")
 app.mount("/static", StaticFiles(directory=FRONTEND_DIR), name="static")
