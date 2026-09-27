@@ -16,9 +16,19 @@ export default function Header() {
 
       <p className="tagline">Scan before you trust. 🇨🇮 — Anti-arnaque · Côte d'Ivoire</p>
 
-      <div className="badge-multiagent">
-        <span className="badge-dot" />
-        Agents actifs : Texte · Capture · URL · Voix IA
+      <div className="header-nav-badges">
+        <div className="badge-multiagent">
+          <span className="badge-dot" />
+          Agents actifs : Texte · Capture · URL · Voix IA
+        </div>
+        <a
+          href="/0xsentinelle-extension.zip"
+          download="0xsentinelle-extension.zip"
+          className="badge-extension-btn"
+          title="Installer l'extension Chrome / Brave"
+        >
+          🧩 Installer l'Extension Browser
+        </a>
       </div>
     </motion.header>
   );

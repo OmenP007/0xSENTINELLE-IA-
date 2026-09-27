@@ -1,10 +1,12 @@
 import './index.css'
 import Header from './components/Header'
 import ScanPanel from './components/ScanPanel'
+import ExtensionPrompt from './components/ExtensionPrompt'
 
 function App() {
   return (
     <div className="app-container">
+      <ExtensionPrompt />
       <div className="app-inner">
         <Header />
         <ScanPanel />
