@@ -56,34 +56,73 @@ def detect_typosquatting(domain_no_port: str) -> Optional[dict]:
 
 
 import httpx
+from bs4 import BeautifulSoup
+
+# Mots-clés suspects à rechercher dans le corps de la page
+PAGE_SCAM_KEYWORDS = [
+    "code otp", "code secret", "mot de passe", "code pin", "code de sécurité",
+    "entrez votre code", "code de confirmation", "votre compte a été suspendu",
+    "félicitations", "vous avez gagné", "tirage au sort", "débloquer votre gain",
+    "envoyez", "transférez", "orange money", "wave ci", "mtn momo", "mobile money",
+    "acompte", "frais de déblocage", "frais de dossier", "validez votre paiement",
+    "réactivez votre compte", "vérifiez votre identité", "urgent", "expire dans",
+    "cliquez ici pour confirmer",
+]
 
 
-def fetch_live_page_content(target_url: str, timeout: float = 4.0) -> dict:
-    """Visite et inspecte le contenu HTML d'une URL en temps réel (OpenClaw / Light Crawler)."""
+def fetch_live_page_content(target_url: str, timeout: float = 6.0) -> dict:
+    """Visite et inspecte le contenu complet d'une URL en temps réel (OpenClaw v2 / Full Crawler)."""
     headers = {
         "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36"
     }
     try:
         resp = httpx.get(target_url, headers=headers, timeout=timeout, follow_redirects=True)
-        html_text = resp.text.lower()
+
+        # ── Parsing HTML complet avec BeautifulSoup ──────────────────────────
+        soup = BeautifulSoup(resp.text, "html.parser")
+
+        # Supprimer les balises inutiles (scripts, styles, meta)
+        for tag in soup(["script", "style", "noscript", "meta", "head"]):
+            tag.decompose()
 
         # Titre de la page
-        title_match = re.search(r"<title[^>]*>(.*?)</title>", html_text, re.IGNORECASE | re.DOTALL)
-        page_title = title_match.group(1).strip() if title_match else ""
+        page_title = soup.title.string.strip() if soup.title and soup.title.string else ""
 
-        # Formulaires & Champs de saisie suspects
-        has_password_field = "type=\"password\"" in html_text or "type='password'" in html_text
-        has_otp_field = any(k in html_text for k in ["otp", "code pin", "code secret", "mot de passe", "passcode"])
-        has_phone_input = "type=\"tel\"" in html_text or "numero" in html_text or "telephone" in html_text
+        # Texte visible complet (nettoyé)
+        visible_text = soup.get_text(separator=" ", strip=True)
+        visible_text_clean = " ".join(visible_text.split())  # normaliser les espaces
+        visible_text_sample = visible_text_clean[:3000]      # 3000 chars max pour le LLM
+
+        html_lower = resp.text.lower()
+        text_lower = visible_text_clean.lower()
+
+        # ── Détection de champs sensibles ────────────────────────────────────
+        has_password_field = "type=\"password\"" in html_lower or "type='password'" in html_lower
+        has_otp_field = any(k in text_lower for k in ["otp", "code pin", "code secret", "mot de passe", "passcode", "code de confirmation"])
+        has_phone_input = "type=\"tel\"" in html_lower or any(k in text_lower for k in ["numéro de téléphone", "telephone", "votre numéro"])
+
+        # ── Détection de mots-clés d'arnaque dans le corps de la page ────────
+        found_scam_keywords = [kw for kw in PAGE_SCAM_KEYWORDS if kw in text_lower]
+        has_scam_content = len(found_scam_keywords) >= 2
+
+        # ── Détection de faux logos / marques Mobile Money ───────────────────
+        impersonated_brands = []
+        for brand in ["wave", "orange money", "mtn", "momo", "djamo", "moov", "jumia", "cnps"]:
+            if brand in text_lower:
+                impersonated_brands.append(brand)
 
         return {
             "status_code": resp.status_code,
             "final_url": str(resp.url),
-            "page_title": page_title[:100],
+            "page_title": page_title[:120],
             "has_password_field": has_password_field,
             "has_otp_field": has_otp_field,
             "has_phone_input": has_phone_input,
-            "scraped_text_sample": page_title or "Page HTML capturée",
+            "has_scam_content": has_scam_content,
+            "scam_keywords_found": found_scam_keywords[:8],
+            "impersonated_brands": impersonated_brands,
+            "visible_text_sample": visible_text_sample,  # ← Nouveau : texte complet pour le LLM
+            "scraped_text_sample": page_title or visible_text_sample[:200] or "Page HTML capturée",
         }
     except Exception as e:
         return {"error": str(e)}
@@ -209,12 +248,30 @@ def analyze_url(url: str, claimed_brand: Optional[str] = None) -> dict:
         notes.append(f"Mots-clés de phishing détectés dans l'URL : {', '.join(found_keywords)}.")
         findings.append(f"🟠 Mots-clés suspects trouvés dans l'URL : {', '.join(found_keywords)}.")
 
-    # 8. Inspection dynamique du contenu (OpenClaw / Scraper Web)
+    # 8. Inspection dynamique du contenu (OpenClaw v2 / Full Crawler)
     crawl_data = fetch_live_page_content(url_to_parse)
     if "error" not in crawl_data:
-        if crawl_data.get("has_otp_field") or crawl_data.get("has_password_field"):
+        # Champs sensibles détectés
+        if crawl_data.get("has_password_field"):
             signals.append("sensitive_info_request")
-            findings.append(f"🔑 [OpenClaw Scraper] Formulaire de saisie de mot de passe ou code OTP détecté sur le site ('{crawl_data.get('page_title')}').")
+            findings.append(f"🔑 [OpenClaw] Formulaire de saisie de MOT DE PASSE détecté sur la page ('{crawl_data.get('page_title')}').")
+        if crawl_data.get("has_otp_field"):
+            signals.append("sensitive_info_request")
+            findings.append(f"🔑 [OpenClaw] Champ de saisie CODE OTP / CODE PIN détecté sur la page.")
+        if crawl_data.get("has_phone_input"):
+            findings.append(f"📞 [OpenClaw] Champ de saisie de numéro de téléphone détecté.")
+
+        # Mots-clés d'arnaque dans le corps de la page
+        if crawl_data.get("has_scam_content"):
+            signals.append("suspicious_url")
+            kws = ", ".join(crawl_data.get("scam_keywords_found", []))
+            findings.append(f"🚨 [OpenClaw] Contenu d'arnaque détecté dans la page : {kws}")
+
+        # Marques impersonnées trouvées dans le texte
+        brands = crawl_data.get("impersonated_brands", [])
+        if brands:
+            signals.append("brand_impersonation")
+            findings.append(f"🏴‍☠️ [OpenClaw] Marques Mobile Money mentionnées sur le site suspect : {', '.join(brands).upper()}")
 
     parsed_params = parse_qs(query)
     query_param_keys = list(parsed_params.keys())

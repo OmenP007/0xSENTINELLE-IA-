@@ -1,0 +1,18 @@
+{
+  "last_updated": "2026-09-27",
+  "total_entries": 12,
+  "numbers": [
+    { "numero": "+2250777000001", "signalements": 5, "type": "Faux agent Orange Money", "region": "Abidjan" },
+    { "numero": "+2250707000002", "signalements": 3, "type": "Arnaque Facebook Marketplace (acompte)", "region": "Bouaké" },
+    { "numero": "+2250101000003", "signalements": 7, "type": "Faux concours Wave CI", "region": "Abidjan" },
+    { "numero": "+2250505000004", "signalements": 2, "type": "Faux recrutement mines/ONG", "region": "San-Pédro" },
+    { "numero": "+2250606000005", "signalements": 4, "type": "Arnaque colis bloqué DHL", "region": "Abidjan" },
+    { "numero": "+2250404000006", "signalements": 6, "type": "Vol OTP MTN MoMo", "region": "Yamoussoukro" },
+    { "numero": "+2250202000007", "signalements": 1, "type": "Brouteur sentimental", "region": "Daloa" },
+    { "numero": "+2250303000008", "signalements": 8, "type": "Faux agent douane aéroport", "region": "Abidjan" },
+    { "numero": "+2250808000009", "signalements": 3, "type": "Arnaque emploi CEPICI", "region": "Abidjan" },
+    { "numero": "+2250909000010", "signalements": 2, "type": "Faux vendeur iPhone Marketplace", "region": "Korhogo" },
+    { "numero": "+2250100000011", "signalements": 9, "type": "Phishing Orange Money (SMS)", "region": "Abidjan" },
+    { "numero": "+2250200000012", "signalements": 4, "type": "Faux concours MTN", "region": "Abidjan" }
+  ]
+}

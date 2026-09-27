@@ -19,47 +19,44 @@
 
 ## 🔴 Priorité 1 — Faisable Maintenant avec tes Tokens
 
-### 🔍 1. Extraction Complète du Texte de la Page
-**Tokens requis :** Aucun — httpx déjà installé  
-**Effort :** ~30 minutes de code  
-**Impact :** L'IA lit le contenu complet de la page suspecte au lieu du seul titre
+### 🔍 1. Extraction Complète du Texte de la Page — ✅ TERMINÉ
+**Tokens requis :** Aucun — httpx + BeautifulSoup4  
+**Effort :** Complété  
+**Impact :** L'IA extrait le texte HTML complet nettoyé de la page (scripts/styles retirés), analyse les balises sensibles (password/OTP/phone) et recherche les mots-clés d'escroquerie en CI.  
 
 ```python
-# Ajout dans fetch_live_page_content() — url_service.py
+# Implémenté dans fetch_live_page_content() — url_service.py
 from bs4 import BeautifulSoup
 soup = BeautifulSoup(resp.text, "html.parser")
-visible_text = soup.get_text(separator=" ", strip=True)[:2000]
-# → Transmis au LLM pour analyse contextuelle complète
+visible_text = soup.get_text(separator=" ", strip=True)[:3000]
+# Transmis automatiquement au LLM et injecté dans les findings
 ```
-
-> ✅ **Gemini API peut lire ce texte** — ton quota Gemini couvre largement ça.
 
 ---
 
-### 📱 2. Blacklist de Numéros Arnaqueurs Connus
-**Tokens requis :** Aucun — base locale JSON  
-**Effort :** ~1 heure  
-**Impact :** Vérification instantanée si un numéro `+225 07...` est signalé
+### 📱 2. Blacklist de Numéros Arnaqueurs Connus — ✅ TERMINÉ
+**Tokens requis :** Aucun — Base JSON local + Service API FastAPI  
+**Effort :** Complété  
+**Impact :** Normalisation auto des numéros CI (`+225 07...`), vérification contre la base communautaire, scoring du risque et API de signalement.
 
 ```
-POST /analyze/phone → { "numero": "+22507XXXXXXXX" }
-→ { "score": 95, "signalements": 12, "type": "Faux agent Orange Money" }
-```
+POST /analyze/phone → { "numero": "+2250777000001" }
+→ { "score": 75, "signalements": 5, "type": "Faux agent Orange Money", "level": "CRITIQUE" }
 
-> ✅ **0 token consommé** — pure base de données locale enrichie par la communauté.
+POST /report/phone → Signalement communautaire instantané
+```
 
 ---
 
-### 📄 3. Rapport PDF Officiel PLCC
-**Tokens requis :** Aucun — `reportlab` (pip install)  
-**Effort :** ~1 heure  
-**Impact :** Génère un PDF de plainte pré-rempli pour la PLCC CI
+### 📄 3. Rapport PDF Officiel PLCC — ✅ TERMINÉ
+**Tokens requis :** Aucun — ReportLab 5.0  
+**Effort :** Complété  
+**Impact :** Génération instantanée d'un dossier PDF de signalement mis en page selon la charte PLCC (Plateforme de Lutte Contre la Cybercriminalité de Côte d'Ivoire) avec référence unique `SENT-PLCC-YYYYMMDDHHMMSS`, score de risque, constats techniques, et contacts directs DITT/PLCC.
 
 ```
-POST /report/generate → PDF avec : URL, screenshot, score, recommandations, contacts PLCC
+POST /report/pdf → Fichier PDF téléchargeable (application/pdf)
+Header: Content-Disposition attachment; filename="Rapport_PLCC_0xSentinelle_95pct.pdf"
 ```
-
-> ✅ **Gratuit** — aucun token nécessaire, juste une dépendance Python.
 
 ---
 

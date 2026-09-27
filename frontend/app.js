@@ -21,6 +21,12 @@ let lastMessageForReply = "";
 let lastScamType = "";
 let currentOfficialReport = "";
 let currentExplanation = "";
+let lastInputType = "text";
+let lastTargetInput = "";
+let lastRiskLevel = "FAIBLE";
+let lastRiskScore = 0;
+let lastTargetBrand = "";
+let lastRecommendations = [];
 
 function showLoading(show) {
   document.getElementById("loading").classList.toggle("hidden", !show);
@@ -51,6 +57,10 @@ function renderResult(data) {
 
   currentExplanation = data.explanation || "Aucun signal détecté.";
   currentOfficialReport = data.official_report || "";
+  lastRiskLevel = data.level || "FAIBLE";
+  lastRiskScore = data.score || 0;
+  lastTargetBrand = data.target_brand || "";
+  lastRecommendations = data.recommendations || [];
 
   updateGauge(data.score || 0);
 
@@ -186,6 +196,43 @@ document.getElementById("btn-copy-report").addEventListener("click", () => {
   });
 });
 
+// PDF Download PLCC
+document.getElementById("btn-download-pdf").addEventListener("click", async () => {
+  const btn = document.getElementById("btn-download-pdf");
+  btn.disabled = true;
+  btn.textContent = "Génération PDF...";
+  try {
+    const res = await fetch(API_BASE + "/report/pdf", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        target_input: lastTargetInput || "Analyse 0xSentinelle",
+        input_type: lastInputType,
+        risk_level: lastRiskLevel,
+        risk_score: lastRiskScore,
+        scam_type: lastScamType || "Analyse de Risque",
+        target_brand: lastTargetBrand || "Non spécifiée",
+        explanation: currentExplanation,
+        recommendations: lastRecommendations
+      })
+    });
+    if (!res.ok) throw new Error("Erreur génération PDF");
+    const blob = await res.blob();
+    const downloadUrl = window.URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = downloadUrl;
+    a.download = `Rapport_PLCC_0xSentinelle_${lastRiskScore}pct.pdf`;
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
+  } catch (e) {
+    alert("Erreur lors du téléchargement du PDF : " + e.message);
+  } finally {
+    btn.disabled = false;
+    btn.textContent = "📄 PDF Officiel PLCC";
+  }
+});
+
 async function postJSON(url, body) {
   const res = await fetch(API_BASE + url, {
     method: "POST",
@@ -201,6 +248,8 @@ document.getElementById("btn-analyze-text").addEventListener("click", async () =
   const brand = document.getElementById("brand-text").value.trim();
   if (!message) return alert("Veuillez saisir un message.");
   lastMessageForReply = message;
+  lastTargetInput = message.substring(0, 50) + (message.length > 50 ? "..." : "");
+  lastInputType = "text";
   showLoading(true);
   try {
     const data = await postJSON("/analyze/text", { message, claimed_brand: brand || null });
@@ -217,6 +266,8 @@ document.getElementById("btn-analyze-url").addEventListener("click", async () =>
   const brand = document.getElementById("brand-url").value.trim();
   if (!url) return alert("Veuillez saisir une URL.");
   lastMessageForReply = url;
+  lastTargetInput = url;
+  lastInputType = "url";
   showLoading(true);
   try {
     const data = await postJSON("/analyze/url", { url, claimed_brand: brand || null });
@@ -228,10 +279,41 @@ document.getElementById("btn-analyze-url").addEventListener("click", async () =>
   }
 });
 
+document.getElementById("btn-analyze-phone").addEventListener("click", async () => {
+  const phone = document.getElementById("phone-input").value.trim();
+  if (!phone) return alert("Veuillez saisir un numéro de téléphone.");
+  lastTargetInput = phone;
+  lastInputType = "phone";
+  showLoading(true);
+  try {
+    const data = await postJSON("/analyze/phone", { numero: phone });
+    renderResult({
+      score: data.score,
+      level: data.level,
+      level_emoji: data.found_in_blacklist ? "🔴" : "🟢",
+      scam_type: data.type_arnaque || "Vérification Numéro Blacklist",
+      explanation: data.message,
+      signals: data.found_in_blacklist ? [`Numéro présent dans la blacklist (${data.signalements} signalements)`, `Région signalée : ${data.region}`] : [],
+      recommendations: data.found_in_blacklist ? [
+        "Ne répondez pas aux appels ou SMS de ce numéro.",
+        "Ne transmettez aucun code OTP ni transfert Mobile Money.",
+        "Bloquez immédiatement ce numéro sur votre téléphone."
+      ] : ["Restez prudent même si ce numéro n'est pas encore répertorié."],
+      official_report: data.found_in_blacklist ? `RAPPORT BLACKLIST 0xSENTINELLE\nNuméro : ${data.numero}\nSignalements : ${data.signalements}\nType : ${data.type_arnaque}\nRégion : ${data.region}` : ""
+    });
+  } catch (e) {
+    alert("Erreur lors de la vérification : " + e.message);
+  } finally {
+    showLoading(false);
+  }
+});
+
 document.getElementById("btn-analyze-image").addEventListener("click", async () => {
   const fileInput = document.getElementById("image-input");
   const brand = document.getElementById("brand-image").value.trim();
   if (!fileInput.files[0]) return alert("Veuillez importer une capture.");
+  lastTargetInput = fileInput.files[0].name;
+  lastInputType = "image";
   showLoading(true);
   try {
     const formData = new FormData();

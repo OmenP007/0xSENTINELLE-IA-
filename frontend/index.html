@@ -18,6 +18,7 @@
         <button class="tab active" data-tab="text">Message</button>
         <button class="tab" data-tab="image">Capture</button>
         <button class="tab" data-tab="url">URL</button>
+        <button class="tab" data-tab="phone">Numéro 📱</button>
       </div>
 
       <section class="tab-content active" id="tab-text">
@@ -39,6 +40,14 @@
         <input type="text" id="url-input" placeholder="https://exemple-suspect.com" />
         <input type="text" id="brand-url" placeholder="Marque revendiquée (optionnel, ex: MTN Momo)" />
         <button class="analyze-btn" id="btn-analyze-url">ANALYSER L'URL</button>
+      </section>
+
+      <section class="tab-content" id="tab-phone">
+        <input type="text" id="phone-input" placeholder="+225 07 77 00 00 01 ou 0707000002" />
+        <button class="analyze-btn" id="btn-analyze-phone">VÉRIFIER LE NUMÉRO</button>
+        <div style="margin-top: 10px; font-size: 0.85rem; color: #94a3b8;">
+          Vérifie instantanément un numéro suspect contre la blacklist communautaire ivoirienne.
+        </div>
       </section>
 
       <div id="loading" class="loading hidden">
@@ -95,7 +104,8 @@
 
         <div class="actions-row">
           <button class="analyze-btn secondary" id="btn-generate-reply">💬 Générer une réponse</button>
-          <button class="analyze-btn secondary report-btn" id="btn-show-report">📋 Signalement Officiel</button>
+          <button class="analyze-btn secondary report-btn" id="btn-show-report">📋 Signalement Texte</button>
+          <button class="analyze-btn secondary pdf-btn" id="btn-download-pdf">📄 PDF Officiel PLCC</button>
         </div>
 
         <div id="reply-block" class="reply-block hidden">

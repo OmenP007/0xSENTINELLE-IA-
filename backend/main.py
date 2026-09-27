@@ -18,7 +18,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
 from fastapi.responses import FileResponse
 
-from routes import analyze, image, url, voice, upload
+from routes import analyze, image, url, voice, upload, phone, report
 
 app = FastAPI(title="0xSentinelle IA", description="Scan before you trust. — v2.0")
 
@@ -33,6 +33,8 @@ app.include_router(analyze.router, tags=["analyze"])
 app.include_router(image.router, tags=["image"])
 app.include_router(url.router, tags=["url"])
 app.include_router(voice.router, tags=["voice"])
+app.include_router(phone.router, tags=["phone"])
+app.include_router(report.router, tags=["report"])
 app.include_router(upload.router, tags=["rag"])
 
 
