@@ -52,15 +52,15 @@ def query_ollama_brev(prompt: str, system_instruction: str = "") -> Optional[dic
                     print(f"[Ollama Brev GPU] Réponse réussie avec le modèle GPU NVIDIA: {m}")
                     # Normalisation des champs pour garantir la compatibilité
                     return {
-                        "scam_type": parsed.get("scam_type", "phishing"),
-                        "score": parsed.get("score", 85),
-                        "signals": parsed.get("signals", ["demande_paiement", "urgence"]),
+                        "scam_type": parsed.get("scam_type", "message_legitime" if parsed.get("score", 0) < 30 else "indetermine"),
+                        "score": parsed.get("score", 0),
+                        "signals": parsed.get("signals", []),
                         "psychological_triggers": parsed.get("psychological_triggers", []),
-                        "explanation": parsed.get("explanation", "Analyse effectuée par le modèle hébergé sur le GPU NVIDIA Brev."),
-                        "recommendations": parsed.get("recommendations", ["Ne communiquez aucun code secret par SMS.", "Vérifiez auprès du service officiel."]),
-                        "confidence": parsed.get("confidence", "high"),
+                        "explanation": parsed.get("explanation", "Analyse effectuée par 0xSentinelle IA."),
+                        "recommendations": parsed.get("recommendations", ["Restez vigilant."]),
+                        "confidence": parsed.get("confidence", "medium"),
                         "language_detected": parsed.get("language_detected", "fr"),
-                        "verification_note": parsed.get("verification_note"),
+                        "verification_note": parsed.get("verification_note", ""),
                         "typosquatting_detected": parsed.get("typosquatting_detected", False),
                         "official_report": parsed.get("official_report", ""),
                     }

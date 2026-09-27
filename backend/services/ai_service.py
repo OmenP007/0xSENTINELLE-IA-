@@ -240,7 +240,32 @@ def _enrich_result(result: dict, raw_text: str) -> dict:
 from services import rag_service, ollama_service
 
 
+BENIGN_SHORT_WORDS = {
+    "ok", "okay", "k", "dak", "d'accord", "daccord", "merci", "salut", "bonjour",
+    "bonsoir", "coucou", "hello", "hi", "yes", "oui", "non", "cool", "super",
+    "merci bcp", "merci beaucoup", "test", "ca va", "ça va", "yo"
+}
+
+
 def analyze_text(message: str, claimed_brand: Optional[str] = None) -> dict:
+    clean_msg = message.strip().lower()
+    if clean_msg in BENIGN_SHORT_WORDS or (len(clean_msg) <= 3 and not any(c.isdigit() for c in clean_msg)):
+        return {
+            "scam_type": "message_legitime",
+            "score": 0,
+            "signals": [],
+            "psychological_triggers": [],
+            "explanation": "Ce message est un mot d'échange ou une salutation usuelle. Aucun indicateur de risque n'a été détecté.",
+            "recommendations": ["Aucune action requise."],
+            "confidence": "high",
+            "language_detected": "fr",
+            "verification_note": "",
+            "typosquatting_detected": False,
+            "official_report": "",
+            "level": "FAIBLE",
+            "level_emoji": "🟢"
+        }
+
     # Recherche RAG des passages pertinents
     rag_context = rag_service.get_relevant_rag_context(f"{claimed_brand or ''} {message}", top_k=3)
 

@@ -144,7 +144,7 @@ class RAGSearchEngine:
         scored_chunks.sort(key=lambda x: x[0], reverse=True)
         top_matches = [c for score, c in scored_chunks if score > 0][:top_k]
 
-        return top_matches if top_matches else self.chunks[:top_k]
+        return top_matches
 
 
 # Instance unique du service RAG

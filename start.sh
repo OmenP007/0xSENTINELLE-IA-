@@ -33,16 +33,25 @@ npm run dev &
 FRONTEND_PID=$!
 echo "✅ Frontend lancé (PID: $FRONTEND_PID) → http://localhost:3000"
 
+# ── Bot Telegram ───────────────────────────────────────
+if [ -n "$TELEGRAM_BOT_TOKEN" ]; then
+  echo "🤖 Démarrage du Bot Telegram 0xSentinelle..."
+  python3 "$SCRIPT_DIR/backend/telegram_bot.py" &
+  TELEGRAM_PID=$!
+  echo "✅ Bot Telegram lancé (PID: $TELEGRAM_PID) → @deadbeef225bot"
+fi
+
 echo ""
 echo "────────────────────────────────────────────────────"
 echo "  🌐 Frontend React : http://localhost:3000"
 echo "  🔧 API Backend    : http://localhost:8000"
+echo "  🤖 Bot Telegram   : @deadbeef225bot"
 echo "  📖 API Docs       : http://localhost:8000/docs"
 echo "────────────────────────────────────────────────────"
 echo "  Ctrl+C pour arrêter"
 echo ""
 
 # ── Cleanup on exit ────────────────────────────────────
-trap "echo ''; echo 'Arrêt...'; kill $BACKEND_PID $FRONTEND_PID 2>/dev/null; echo 'Bye! 👋'" EXIT
+trap "echo ''; echo 'Arrêt...'; kill $BACKEND_PID $FRONTEND_PID $TELEGRAM_PID 2>/dev/null; echo 'Bye! 👋'" EXIT
 
 wait
