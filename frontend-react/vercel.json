@@ -2,9 +2,13 @@
   "buildCommand": "npm run build",
   "outputDirectory": "../frontend-build",
   "rewrites": [
-    {
-      "source": "/(.*)",
-      "destination": "/index.html"
-    }
+    { "source": "/analyze/:path*", "destination": "http://216.81.248.197:8000/analyze/:path*" },
+    { "source": "/image/:path*", "destination": "http://216.81.248.197:8000/image/:path*" },
+    { "source": "/url/:path*", "destination": "http://216.81.248.197:8000/url/:path*" },
+    { "source": "/voice/:path*", "destination": "http://216.81.248.197:8000/voice/:path*" },
+    { "source": "/phone/:path*", "destination": "http://216.81.248.197:8000/phone/:path*" },
+    { "source": "/report/:path*", "destination": "http://216.81.248.197:8000/report/:path*" },
+    { "source": "/upload/:path*", "destination": "http://216.81.248.197:8000/upload/:path*" },
+    { "source": "/((?!0xsentinelle-extension.zip|assets/).*)", "destination": "/index.html" }
   ]
 }
