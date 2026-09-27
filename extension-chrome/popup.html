@@ -84,10 +84,17 @@
       font-weight: bold;
       margin-bottom: 6px;
     }
-    .badge-critique { background: #ef4444; color: white; }
-    .badge-eleve { background: #f97316; color: white; }
-    .badge-modere { background: #eab308; color: black; }
-    .badge-faible { background: #22c55e; color: white; }
+    .badge-critique, .badge-high    { background: #ef4444; color: white; }
+    .badge-élevé,   .badge-eleve    { background: #f97316; color: white; }
+    .badge-moyen,   .badge-modere,
+    .badge-medium                   { background: #eab308; color: black; }
+    .badge-faible,  .badge-low      { background: #22c55e; color: white; }
+    .backend-status {
+      font-size: 10px;
+      text-align: right;
+      color: #64748b;
+      margin-top: 4px;
+    }
     ul { margin: 4px 0; padding-left: 16px; }
   </style>
 </head>
@@ -98,9 +105,10 @@
     <h2>0xSentinelle Shield</h2>
   </div>
 
-  <div style="font-size: 11px; color: #94a3b8; margin-bottom: 8px;">
-    Analyse IA instantanée SMS, WhatsApp, Facebook & URLs.
+  <div style="font-size: 11px; color: #94a3b8; margin-bottom: 4px;">
+    Analyse IA instantanée SMS, WhatsApp, Facebook &amp; URLs.
   </div>
+  <div class="backend-status" id="backendStatus">⏳ Vérification backend...</div>
 
   <textarea id="textInput" placeholder="Collez un SMS, message WhatsApp ou lien à analyser..."></textarea>
   
