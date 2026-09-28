@@ -2,13 +2,7 @@
   "buildCommand": "cd frontend-react && npm install && npm run build",
   "outputDirectory": "frontend-build",
   "rewrites": [
-    { "source": "/analyze/:path*", "destination": "https://RAILWAY_BACKEND_URL/analyze/:path*" },
-    { "source": "/image/:path*", "destination": "https://RAILWAY_BACKEND_URL/image/:path*" },
-    { "source": "/url/:path*", "destination": "https://RAILWAY_BACKEND_URL/url/:path*" },
-    { "source": "/voice/:path*", "destination": "https://RAILWAY_BACKEND_URL/voice/:path*" },
-    { "source": "/phone/:path*", "destination": "https://RAILWAY_BACKEND_URL/phone/:path*" },
-    { "source": "/report/:path*", "destination": "https://RAILWAY_BACKEND_URL/report/:path*" },
-    { "source": "/upload/:path*", "destination": "https://RAILWAY_BACKEND_URL/upload/:path*" },
-    { "source": "/((?!0xsentinelle-extension.zip|assets/).*)", "destination": "/index.html" }
+    { "source": "/((?!assets/|0xsentinelle-extension.zip|favicon.ico).*)", "destination": "/index.html" }
   ]
 }
+
