@@ -873,12 +873,32 @@ body {
 }
 
 @media (max-width: 640px) {
-  .extension-banner {
+  .header-nav-badges {
     flex-direction: column;
-    align-items: flex-start;
-  }
-  .ext-banner-actions {
+    gap: 8px;
     width: 100%;
-    justify-content: space-between;
+    align-items: stretch;
+  }
+
+  .badge-multiagent {
+    font-size: 11px;
+    text-align: center;
+    justify-content: center;
+  }
+
+  .badge-telegram-btn, .badge-extension-btn {
+    width: 100%;
+    justify-content: center;
+    font-size: 13px;
+    padding: 8px 14px;
+  }
+
+  .extension-banner {
+    bottom: 12px;
+    right: 12px;
+    left: 12px;
+    width: auto;
+    max-width: calc(100vw - 24px);
+    padding: 14px 14px;
   }
 }
