@@ -1,12 +1,27 @@
 import os
 import httpx
 import json
-from typing import Optional
+import re
+from typing import Optional, List
 
 def _get_brev_config():
     host = os.getenv("BREV_OLLAMA_HOST", "").strip()
-    model = os.getenv("BREV_MODEL", "mistral").strip() or "mistral"
+    if host and not host.startswith("http://") and not host.startswith("https://"):
+        host = f"http://{host}"
+    model = os.getenv("BREV_MODEL", "").strip()
     return host, model
+
+
+def get_available_models(host: str) -> List[str]:
+    """Récupère dynamiquement la liste des modèles installés sur Ollama."""
+    try:
+        resp = httpx.get(f"{host}/api/tags", timeout=3.0)
+        if resp.status_code == 200:
+            data = resp.json()
+            return [m.get("name") for m in data.get("models", []) if m.get("name")]
+    except Exception:
+        pass
+    return []
 
 
 def is_ollama_available() -> bool:
@@ -21,6 +36,28 @@ def is_ollama_available() -> bool:
         return False
 
 
+def _extract_json_from_response(text: str) -> Optional[dict]:
+    """Extrait le JSON d'une réponse LLM, en retirant les balises <think> (DeepSeek-R1)."""
+    if not text:
+        return None
+    # Suppression des balises de raisonnement DeepSeek-R1 <think>...</think>
+    cleaned = re.sub(r'<think>.*?</think>', '', text, flags=re.DOTALL).strip()
+    
+    try:
+        return json.loads(cleaned)
+    except Exception:
+        pass
+    
+    # Recherche d'un bloc JSON avec regex
+    match = re.search(r'\{.*\}', cleaned, re.DOTALL)
+    if match:
+        try:
+            return json.loads(match.group(0))
+        except Exception:
+            pass
+    return None
+
+
 def query_ollama_brev(prompt: str, system_instruction: str = "") -> Optional[dict]:
     """Interroge le modèle IA hébergé sur le GPU NVIDIA Brev via Ollama."""
     host, model = _get_brev_config()
@@ -28,8 +65,30 @@ def query_ollama_brev(prompt: str, system_instruction: str = "") -> Optional[dic
         return None
 
     url = f"{host}/api/generate"
-    model_candidates = [model, f"{model}:latest", "mistral:latest", "mistral"]
-    models_to_try = list(dict.fromkeys(model_candidates))
+    
+    # 1. Modèles dynamiquement détectés sur le serveur Brev
+    available = get_available_models(host)
+
+    # 2. Liste de priorité des modèles
+    model_candidates = []
+    if model:
+        model_candidates.extend([model, f"{model}:latest"])
+
+    model_candidates.extend(available)
+
+    # 3. Candidats par défaut (nouveaux modèles Brev GPU)
+    model_candidates.extend([
+        "hf.co/bartowski/DeepSeek-R1-Distill-Qwen-32B-GGUF:Q4_K_M",
+        "qwen2.5-coder:32b",
+        "dolphin-mixtral:latest",
+        "dolphin-mixtral",
+        "dolphin-llama3:latest",
+        "dolphin-llama3",
+        "mistral:latest",
+        "mistral"
+    ])
+
+    models_to_try = list(dict.fromkeys([m for m in model_candidates if m]))
 
     for m in models_to_try:
         payload = {
@@ -43,14 +102,14 @@ def query_ollama_brev(prompt: str, system_instruction: str = "") -> Optional[dic
             },
         }
         try:
-            resp = httpx.post(url, json=payload, timeout=25.0)
+            # 45s de timeout pour supporter les modèles 32B (DeepSeek-R1 / Qwen2.5-Coder)
+            resp = httpx.post(url, json=payload, timeout=45.0)
             if resp.status_code == 200:
                 data = resp.json()
                 response_text = data.get("response", "").strip()
-                parsed = json.loads(response_text)
+                parsed = _extract_json_from_response(response_text)
                 if isinstance(parsed, dict):
                     print(f"[Ollama Brev GPU] Réponse réussie avec le modèle GPU NVIDIA: {m}")
-                    # Normalisation des champs pour garantir la compatibilité
                     return {
                         "scam_type": parsed.get("scam_type", "message_legitime" if parsed.get("score", 0) < 30 else "indetermine"),
                         "score": parsed.get("score", 0),
@@ -69,5 +128,6 @@ def query_ollama_brev(prompt: str, system_instruction: str = "") -> Optional[dic
             continue
 
     return None
+
 
 
