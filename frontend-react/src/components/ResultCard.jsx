@@ -1,9 +1,14 @@
 import { motion, AnimatePresence } from "framer-motion";
 import { useEffect, useRef, useState } from "react";
 import { fetchVoiceMP3, postJSON } from "../api";
+import { 
+  ShieldAlert, ShieldCheck, AlertTriangle, Brain, Zap, Target, 
+  Search, Info, Bot, Shield, CheckCircle2, MessageSquare, 
+  FileText, Volume2, Square, Loader2 
+} from "lucide-react";
 
 // ─── Score Gauge SVG ───────────────────────────────────────────────────────────
-function ScoreGauge({ score, level, emoji }) {
+function ScoreGauge({ score, level }) {
   const circumference = 314.15;
   const offset = circumference - (score / 100) * circumference;
 
@@ -13,11 +18,7 @@ function ScoreGauge({ score, level, emoji }) {
     : score >= 30 ? "#ffd93d"
     : "#52c41a";
 
-  const levelColor =
-    score >= 80 ? "#ff4d4f"
-    : score >= 60 ? "#ffa940"
-    : score >= 30 ? "#ffd93d"
-    : "#52c41a";
+  const levelColor = strokeColor;
 
   return (
     <div className="gauge-wrapper">
@@ -30,7 +31,9 @@ function ScoreGauge({ score, level, emoji }) {
         />
       </svg>
       <div className="score-center">
-        <div className="score-emoji">{emoji}</div>
+        <div className="score-emoji">
+          {score >= 80 ? <ShieldAlert size={26} color="#ff4d4f" /> : score >= 30 ? <AlertTriangle size={26} color="#ffa940" /> : <ShieldCheck size={26} color="#52c41a" />}
+        </div>
         <motion.div
           className="score-value"
           style={{ color: levelColor }}
@@ -110,7 +113,7 @@ function VoiceButton({ score, level, explanation, scamType }) {
       disabled={loading}
       title={playing ? "Arrêter la lecture" : "Écouter l'alerte vocale"}
     >
-      {loading ? "⏳" : playing ? "⏹" : "🔊"}
+      {loading ? <Loader2 size={16} /> : playing ? <Square size={14} /> : <Volume2 size={16} />}
       {loading ? "Génération..." : playing ? "Arrêter" : "Écouter l'alerte vocale"}
     </button>
   );
@@ -130,11 +133,11 @@ function ConfidenceBadge({ confidence }) {
 // ─── Language Badge ───────────────────────────────────────────────────────────
 function LangBadge({ lang }) {
   const map = {
-    fr: "🇫🇷 Français",
-    nouchi: "🇨🇮 Nouchi",
-    dioula: "🇨🇮 Dioula",
-    en: "🇬🇧 English",
-    mixte: "🌍 Mixte",
+    fr: "Français",
+    nouchi: "Nouchi",
+    dioula: "Dioula",
+    en: "English",
+    mixte: "Mixte",
   };
   return <span className="lang-badge">{map[lang] || lang}</span>;
 }
@@ -147,7 +150,7 @@ export default function ResultCard({ data, originalMessage, onReply }) {
   const [showReply, setShowReply] = useState(false);
   const [copied, setCopied] = useState(false);
 
-  const { score, level, level_emoji, scam_type, explanation, signals, psychological_triggers,
+  const { score, level, scam_type, explanation, signals, psychological_triggers,
     recommendations, confidence, language_detected, verification_note, typosquatting_detected,
     official_report } = data;
 
@@ -184,7 +187,7 @@ export default function ResultCard({ data, originalMessage, onReply }) {
     <motion.div className="result-section" variants={cardVariants} initial="hidden" animate="visible">
       {/* Score Card */}
       <div className="score-card">
-        <ScoreGauge score={score || 0} level={level} emoji={level_emoji || "🟢"} />
+        <ScoreGauge score={score || 0} level={level} />
         <div className="score-level" style={{
           color: score >= 80 ? "#ff4d4f" : score >= 60 ? "#ffa940" : score >= 30 ? "#ffd93d" : "#52c41a"
         }}>
@@ -209,11 +212,15 @@ export default function ResultCard({ data, originalMessage, onReply }) {
         {psychological_triggers?.length > 0 && (
           <motion.div className="detail-block"
             initial={{ opacity: 0, height: 0 }} animate={{ opacity: 1, height: "auto" }}>
-            <div className="detail-title">🧠 Déclencheurs Psychologiques</div>
+            <div className="detail-title">
+              <Brain size={16} color="#c084fc" style={{ marginRight: 6, display: "inline" }} />
+              Déclencheurs Psychologiques
+            </div>
             <div className="triggers-grid">
               {psychological_triggers.map((t, i) => (
                 <div key={i} className="trigger-chip" title={t.description}>
-                  ⚡ {t.name}
+                  <Zap size={12} color="#ffd93d" style={{ marginRight: 4, display: "inline" }} />
+                  {t.name}
                 </div>
               ))}
             </div>
@@ -223,22 +230,30 @@ export default function ResultCard({ data, originalMessage, onReply }) {
 
       {/* Type probable */}
       <div className="detail-block">
-        <div className="detail-title">🎯 Type Détecté</div>
+        <div className="detail-title">
+          <Target size={16} color="#38bdf8" style={{ marginRight: 6, display: "inline" }} />
+          Type Détecté
+        </div>
         <p className="detail-text">{scam_type?.replace(/_/g, " ") || "—"}</p>
       </div>
 
       {/* Typosquatting / Vérification */}
       {(verification_note || typosquatting_detected) && (
         <div className="detail-block">
-          <div className="detail-title">🔍 Vérification Officielle</div>
+          <div className="detail-title">
+            <Search size={16} color="#38bdf8" style={{ marginRight: 6, display: "inline" }} />
+            Vérification Officielle
+          </div>
           {typosquatting_detected && (
             <div className="typosquatting-alert">
-              ⚠️ ALERTE : Typosquatting / Imitation de marque détectée !
+              <AlertTriangle size={14} color="#ff4d4f" style={{ marginRight: 6, display: "inline" }} />
+              ALERTE : Typosquatting / Imitation de marque détectée !
             </div>
           )}
           {verification_note && (
             <div className="verification-alert" style={{ marginTop: typosquatting_detected ? 8 : 0 }}>
-              ℹ️ {verification_note}
+              <Info size={14} color="#38bdf8" style={{ marginRight: 6, display: "inline" }} />
+              {verification_note}
             </div>
           )}
         </div>
@@ -246,7 +261,10 @@ export default function ResultCard({ data, originalMessage, onReply }) {
 
       {/* Signaux détectés */}
       <div className="detail-block">
-        <div className="detail-title">⚠️ Signaux Détectés</div>
+        <div className="detail-title">
+          <AlertTriangle size={16} color="#ffa940" style={{ marginRight: 6, display: "inline" }} />
+          Signaux Détectés
+        </div>
         {signals?.length > 0 ? (
           <ul className="signals-list">
             {signals.map((s, i) => (
@@ -263,18 +281,24 @@ export default function ResultCard({ data, originalMessage, onReply }) {
 
       {/* Explication */}
       <div className="detail-block">
-        <div className="detail-title">🤖 Synthèse de l'Agent IA</div>
+        <div className="detail-title">
+          <Bot size={16} color="#00f2fe" style={{ marginRight: 6, display: "inline" }} />
+          Synthèse de l'Agent IA
+        </div>
         <p className="detail-text">{explanation || "—"}</p>
       </div>
 
       {/* Recommandations */}
       {recommendations?.length > 0 && (
         <div className="detail-block">
-          <div className="detail-title">🛡️ Recommandations</div>
+          <div className="detail-title">
+            <Shield size={16} color="#52c41a" style={{ marginRight: 6, display: "inline" }} />
+            Recommandations
+          </div>
           <ul className="reco-list">
             {recommendations.map((r, i) => (
               <li key={i} className="reco-item">
-                <span className="reco-icon">✓</span>
+                <CheckCircle2 size={14} color="#52c41a" style={{ marginRight: 6, display: "inline" }} />
                 {r}
               </li>
             ))}
@@ -285,11 +309,13 @@ export default function ResultCard({ data, originalMessage, onReply }) {
       {/* Actions */}
       <div className="actions-row">
         <button className="action-btn" onClick={handleGenerateReply} disabled={loadingReply}>
-          {loadingReply ? "⏳" : "💬"} {loadingReply ? "Génération..." : "Générer réponse"}
+          {loadingReply ? <Loader2 size={14} className="animate-spin" /> : <MessageSquare size={14} style={{ marginRight: 4, display: "inline" }} />}
+          {loadingReply ? "Génération..." : "Générer réponse"}
         </button>
         {official_report && (
           <button className="action-btn" onClick={() => setShowReport(!showReport)}>
-            📋 {showReport ? "Masquer" : "Signalement Officiel"}
+            <FileText size={14} style={{ marginRight: 4, display: "inline" }} />
+            {showReport ? "Masquer" : "Signalement Officiel"}
           </button>
         )}
       </div>
@@ -300,7 +326,10 @@ export default function ResultCard({ data, originalMessage, onReply }) {
           <motion.div className="collapsible-block"
             initial={{ opacity: 0, height: 0 }} animate={{ opacity: 1, height: "auto" }}
             exit={{ opacity: 0, height: 0 }}>
-            <div className="detail-title">💬 Réponse Prudente Suggérée</div>
+            <div className="detail-title">
+              <MessageSquare size={16} color="#38bdf8" style={{ marginRight: 6, display: "inline" }} />
+              Réponse Prudente Suggérée
+            </div>
             <p className="detail-text">{replyText}</p>
           </motion.div>
         )}
@@ -312,10 +341,17 @@ export default function ResultCard({ data, originalMessage, onReply }) {
           <motion.div className="collapsible-block"
             initial={{ opacity: 0, height: 0 }} animate={{ opacity: 1, height: "auto" }}
             exit={{ opacity: 0, height: 0 }}>
-            <div className="detail-title">📋 Rapport d'Abus Officiel</div>
+            <div className="detail-title">
+              <FileText size={16} color="#00f2fe" style={{ marginRight: 6, display: "inline" }} />
+              Rapport d'Abus Officiel
+            </div>
             <textarea className="report-textarea" readOnly rows={8} value={official_report} />
             <button className="analyze-btn" style={{ marginTop: 10 }} onClick={handleCopyReport}>
-              {copied ? "✅ Copié !" : "📋 Copier le rapport"}
+              {copied ? (
+                <><CheckCircle2 size={14} style={{ marginRight: 4, display: "inline" }} /> Copié !</>
+              ) : (
+                <><FileText size={14} style={{ marginRight: 4, display: "inline" }} /> Copier le rapport</>
+              )}
             </button>
           </motion.div>
         )}

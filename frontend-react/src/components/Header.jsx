@@ -1,4 +1,5 @@
 import { motion } from "framer-motion";
+import { Send, Puzzle } from "lucide-react";
 
 export default function Header() {
   return (
@@ -14,7 +15,7 @@ export default function Header() {
         <span className="logo-ia"> IA</span>
       </div>
 
-      <p className="tagline">Scan before you trust. 🇨🇮 — Anti-arnaque · Côte d'Ivoire</p>
+      <p className="tagline">Scan before you trust. — Anti-arnaque · Côte d'Ivoire</p>
 
       <div className="header-nav-badges">
         <div className="badge-multiagent">
@@ -22,13 +23,13 @@ export default function Header() {
           Agents actifs : Texte · Capture · URL · Voix IA
         </div>
         <a
-          href="https://t.me/0xSentinelleBot"
+          href="https://t.me/deadbeef225bot"
           target="_blank"
           rel="noopener noreferrer"
           className="badge-telegram-btn"
-          title="Ouvrir le Bot Telegram @0xSentinelleBot"
+          title="Ouvrir le Bot Telegram @deadbeef225bot"
         >
-          ✈️ Bot Telegram @0xSentinelleBot
+          <Send size={14} style={{ marginRight: 4 }} /> Bot Telegram @deadbeef225bot
         </a>
         <a
           href="/0xsentinelle-extension.zip"
@@ -36,7 +37,7 @@ export default function Header() {
           className="badge-extension-btn"
           title="Installer l'extension Chrome / Brave"
         >
-          🧩 Extension Browser
+          <Puzzle size={14} style={{ marginRight: 4 }} /> Extension Browser
         </a>
       </div>
     </motion.header>

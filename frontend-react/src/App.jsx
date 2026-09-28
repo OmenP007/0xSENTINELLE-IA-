@@ -13,7 +13,7 @@ function App() {
         <footer className="footer">
           <p>
             <span>0xSentinelle IA</span> — Protection Anti-Arnaques 🇨🇮 Côte d'Ivoire ·
-            Bot Telegram : <a href="https://t.me/0xSentinelleBot" target="_blank" rel="noreferrer" style={{color: '#24A1DE', textDecoration: 'underline'}}>@0xSentinelleBot</a> ·
+            Bot Telegram : <a href="https://t.me/deadbeef225bot" target="_blank" rel="noreferrer" style={{color: '#24A1DE', textDecoration: 'underline'}}>@deadbeef225bot</a> ·
             Signalement : ARTCI · PJ Cybercriminalité <span>+225 27 20 25 98 72</span>
           </p>
         </footer>

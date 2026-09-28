@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
+import { Puzzle, Download, BookOpen, Shield } from "lucide-react";
 
 export default function ExtensionPrompt() {
   const [showBanner, setShowBanner] = useState(false);
@@ -36,7 +37,7 @@ export default function ExtensionPrompt() {
               ✕
             </button>
             <div className="ext-banner-content">
-              <div className="ext-banner-icon">🧩</div>
+              <div className="ext-banner-icon"><Puzzle size={22} color="#00f2fe" /></div>
               <div className="ext-banner-text">
                 <strong>Protections Chrome & Brave en temps réel !</strong>
                 <span>Scannez vos emails, SMS WhatsApp et pages web contre les arnaques.</span>
@@ -50,10 +51,10 @@ export default function ExtensionPrompt() {
                 className="btn-ext-download"
                 onClick={() => setShowModal(true)}
               >
-                📥 Télécharger l'Extension
+                <Download size={13} style={{ marginRight: 4, display: "inline" }} /> Télécharger l'Extension
               </a>
               <button className="btn-ext-guide" onClick={() => setShowModal(true)}>
-                📖 Guide (30s)
+                <BookOpen size={13} style={{ marginRight: 4, display: "inline" }} /> Guide (30s)
               </button>
             </div>
           </motion.div>
@@ -78,7 +79,7 @@ export default function ExtensionPrompt() {
               onClick={(e) => e.stopPropagation()}
             >
               <div className="ext-modal-header">
-                <h3>🧩 Installation de l'Extension Chrome 0xSentinelle</h3>
+                <h3><Puzzle size={18} color="#00f2fe" style={{ marginRight: 8, display: "inline" }} /> Installation de l'Extension Chrome 0xSentinelle</h3>
                 <button className="ext-modal-close" onClick={() => setShowModal(false)}>
                   ✕
                 </button>
@@ -131,7 +132,7 @@ export default function ExtensionPrompt() {
                 </div>
 
                 <div className="ext-footer-note">
-                  🛡️ <em>0xSentinelle IA surveillera désormais votre navigation en temps réel.</em>
+                  <Shield size={14} color="#00f2fe" style={{ marginRight: 6, display: "inline" }} /> <em>0xSentinelle IA surveillera désormais votre navigation en temps réel.</em>
                 </div>
               </div>
             </motion.div>
