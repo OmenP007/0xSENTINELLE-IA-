@@ -27,16 +27,19 @@ export default function ExtensionPrompt() {
         {showBanner && (
           <motion.div
             className="extension-banner"
-            initial={{ opacity: 0, y: -50, scale: 0.95 }}
+            initial={{ opacity: 0, y: 50, scale: 0.95 }}
             animate={{ opacity: 1, y: 0, scale: 1 }}
-            exit={{ opacity: 0, y: -30, scale: 0.95 }}
+            exit={{ opacity: 0, y: 50, scale: 0.95 }}
             transition={{ duration: 0.4, ease: "easeOut" }}
           >
+            <button className="btn-ext-close" onClick={handleDismiss} title="Fermer la bannière">
+              ✕
+            </button>
             <div className="ext-banner-content">
               <div className="ext-banner-icon">🧩</div>
               <div className="ext-banner-text">
                 <strong>Protections Chrome & Brave en temps réel !</strong>
-                <span>Scannez automatiquement vos emails, SMS WhatsApp et pages web contre les arnaques.</span>
+                <span>Scannez vos emails, SMS WhatsApp et pages web contre les arnaques.</span>
               </div>
             </div>
 
@@ -51,9 +54,6 @@ export default function ExtensionPrompt() {
               </a>
               <button className="btn-ext-guide" onClick={() => setShowModal(true)}>
                 📖 Guide (30s)
-              </button>
-              <button className="btn-ext-close" onClick={handleDismiss} title="Fermer">
-                ✕
               </button>
             </div>
           </motion.div>
