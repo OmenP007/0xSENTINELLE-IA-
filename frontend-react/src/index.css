@@ -616,6 +616,30 @@ body {
   box-shadow: 0 0 16px rgba(0, 242, 254, 0.35);
 }
 
+.badge-telegram-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: linear-gradient(135deg, rgba(36, 161, 222, 0.2), rgba(0, 136, 204, 0.2));
+  border: 1px solid rgba(36, 161, 222, 0.5);
+  border-radius: 20px;
+  color: #24A1DE;
+  padding: 6px 14px;
+  font-size: 12px;
+  font-weight: 600;
+  text-decoration: none;
+  transition: all 0.25s ease;
+  box-shadow: 0 0 10px rgba(36, 161, 222, 0.15);
+}
+
+.badge-telegram-btn:hover {
+  background: linear-gradient(135deg, rgba(36, 161, 222, 0.4), rgba(0, 136, 204, 0.4));
+  border-color: #24A1DE;
+  color: #ffffff;
+  transform: translateY(-2px);
+  box-shadow: 0 0 16px rgba(36, 161, 222, 0.4);
+}
+
 .extension-banner {
   position: fixed;
   bottom: 24px;

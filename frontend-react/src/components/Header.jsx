@@ -22,12 +22,21 @@ export default function Header() {
           Agents actifs : Texte · Capture · URL · Voix IA
         </div>
         <a
+          href="https://t.me/0xSentinelleBot"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="badge-telegram-btn"
+          title="Ouvrir le Bot Telegram @0xSentinelleBot"
+        >
+          ✈️ Bot Telegram @0xSentinelleBot
+        </a>
+        <a
           href="/0xsentinelle-extension.zip"
           download="0xsentinelle-extension.zip"
           className="badge-extension-btn"
           title="Installer l'extension Chrome / Brave"
         >
-          🧩 Installer l'Extension Browser
+          🧩 Extension Browser
         </a>
       </div>
     </motion.header>
